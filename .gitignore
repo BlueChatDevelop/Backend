@@ -4,9 +4,7 @@ obj/
 latest/
 /env-vars.bat
 *.suo
-#ignore thumbnails created by windows
 Thumbs.db
-#Ignore files build by Visual Studio
 *.obj
 *.exe
 *.pdb
@@ -49,3 +47,13 @@ tests/ServiceStack.Redis.Tests/azureconfig.txt
 *.rdb
 *.dat
 *.rdb
+
+**/docker-compose.override.yml
+**/docker-compose.*.yml
+**/Dockerfile.*
+**/.dockerignore
+**/docker-compose.debug.yml
+
+**/docker-data/
+**/docker-entrypoint-initdb.d/
+**/*.log
