@@ -33,6 +33,7 @@ jobs:
           git checkout main
           shopt -s extglob
           rm -rf !(.git)
+          git rm --cached Backend
 
       - name: Copy backend folder to Application repository
         run: |
