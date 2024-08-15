@@ -1,0 +1,33 @@
+name: Update Application Repository
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-repo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v2
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Clone Application repository
+        run: |
+          git clone https://github.com/BlueChatDevelop/Application.git app-repo
+          cd app-repo
+          git checkout main
+
+      - name: Copy files to Application repository
+        run: |
+          rsync -av --exclude='.git' --exclude='.github' ./ ./app-repo/
+          cd app-repo
+          git add .
+          git commit -m "Update Application repository with the latest changes Backend from main"
+          git push origin main
