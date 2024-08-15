@@ -29,6 +29,19 @@ services:
     ports:
       - "5000:5000"
 
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./Site/nginx.conf:/etc/nginx/nginx.conf
+      - ./Site/Frontend:/usr/share/nginx/html
+    networks:
+      - app-network
+    depends_on:
+      - db
+      - api
+
 networks:
   app-network:
     driver: bridge
