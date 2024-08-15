@@ -26,7 +26,7 @@ jobs:
 
       - name: Copy backend folder to Application repository
         run: |
-          cp -r ./backend ./app-repo/
+          cp -r ./Backend ./app-repo/
           cd app-repo
           git add .
           git commit -m "Update Application repository with the latest changes from backend" || echo "No changes to commit"
