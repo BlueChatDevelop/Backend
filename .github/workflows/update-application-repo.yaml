@@ -26,6 +26,8 @@ jobs:
 
       - name: Copy backend folder to Application repository
         run: |
+          cd ..
+          ls -la
           cp -r ./Backend ./app-repo/
           cd app-repo
           git add .
