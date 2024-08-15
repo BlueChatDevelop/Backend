@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout current repository
         uses: actions/checkout@v2
+        with:
+          submodules: false
 
       - name: Configure Git
         run: |
