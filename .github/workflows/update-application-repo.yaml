@@ -20,7 +20,7 @@ jobs:
 
       - name: Clone Application repository
         run: |
-          git clone https://github.com/BlueChatDevelop/Application.git app-repo
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/BlueChatDevelop/Application.git app-repo
           cd app-repo
           git checkout main
 
@@ -29,5 +29,5 @@ jobs:
           rsync -av --exclude='.git' --exclude='.github' ./ ./app-repo/
           cd app-repo
           git add .
-          git commit -m "Update Application repository with the latest changes Backend from main"
-          git push origin main
+          git commit -m "Update Application repository with the latest changes from main" || echo "No changes to commit"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/BlueChatDevelop/Application.git main
