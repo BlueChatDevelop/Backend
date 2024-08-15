@@ -18,12 +18,19 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
+      - name: Clear local repo
+        run: |
+          rm -rf .git
+          rm -rf .github
+
       - name: Clone Application repository
         run: |
           cd ..
           git clone https://x-access-token:${{ secrets.DEPLOY_TOKEN }}@github.com/BlueChatDevelop/Application.git app-repo
           cd app-repo
           git checkout main
+          shopt -s extglob
+          rm -rf !(.git)
 
       - name: Copy backend folder to Application repository
         run: |
