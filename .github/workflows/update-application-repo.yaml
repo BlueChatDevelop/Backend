@@ -24,10 +24,10 @@ jobs:
           cd app-repo
           git checkout main
 
-      - name: Copy files to Application repository
+      - name: Copy backend folder to Application repository
         run: |
-          rsync -av --exclude='.git' --exclude='.github' ./ ./app-repo/
+          cp -r ./backend ./app-repo/
           cd app-repo
           git add .
-          git commit -m "Update Application repository with the latest changes from main" || echo "No changes to commit"
+          git commit -m "Update Application repository with the latest changes from backend" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.DEPLOY_TOKEN }}@github.com/BlueChatDevelop/Application.git main
