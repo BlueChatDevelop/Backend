@@ -3,7 +3,6 @@ version: '3.8'
 services:
   db:
     build: ./MysqlDB
-    container_name: bluechat_mysql
     environment:
       MYSQL_ROOT_PASSWORD: root_password
       MYSQL_DATABASE: bluechat_db
@@ -11,8 +10,25 @@ services:
       MYSQL_PASSWORD: user_password
     ports:
       - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
 
-volumes:
-  mysql_data:
+  api:
+    build:
+      context: ./../
+      dockerfile: Docker/Api/Dockerfile
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_USER=user
+      - DATABASE_PASSWORD=user_password
+      - DATABASE_NAME=bluechat_db
+    depends_on:
+      - db
+    networks:
+      - app-network
+    ports:
+      - "5000:5000"
+
+networks:
+  app-network:
+    driver: bridge
