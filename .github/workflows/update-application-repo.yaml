@@ -20,6 +20,7 @@ jobs:
 
       - name: Clone Application repository
         run: |
+          cd ..
           git clone https://x-access-token:${{ secrets.DEPLOY_TOKEN }}@github.com/BlueChatDevelop/Application.git app-repo
           cd app-repo
           git checkout main
