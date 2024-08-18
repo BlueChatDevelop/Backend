@@ -176,7 +176,12 @@ namespace Authorization
                 }
             }
         }
-
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear(); // Очищаем сессию
+            return Ok("User logged out successfully.");
+        }
         [HttpGet("isAuthenticated")]
         public IActionResult IsAuthenticated()
         {
