@@ -117,23 +117,29 @@ namespace Authorization
 
 
         [HttpDelete("delete")]
-        public IActionResult DeleteUser([FromBody] UserDeleteRequest request)
+        public IActionResult DeleteUser()
         {
-            var authResult = EnsureAuthenticated();
-            if (authResult != null) return authResult;
+            // Проверяем, авторизован ли пользователь
+            var email = HttpContext.Session.GetString("UserEmail");
+            if (string.IsNullOrEmpty(email))
+            {
+                return Unauthorized(); // Если пользователь не авторизован, возвращаем 401
+            }
 
             using (var connection = new MySqlConnection(TakeConnectionString()))
             {
                 connection.Open();
 
-                var query = "DELETE FROM Users WHERE Email = @Email AND Password = @Password";
+                var query = "DELETE FROM Users WHERE Email = @Email";
 
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Email", request.Email);
-                    command.Parameters.AddWithValue("@Password", request.Password);
+                    command.Parameters.AddWithValue("@Email", email);
 
                     int rowsAffected = command.ExecuteNonQuery();
+
+                    // Очистка сессии после удаления аккаунта
+                    HttpContext.Session.Clear();
 
                     return Ok(rowsAffected > 0);
                 }
