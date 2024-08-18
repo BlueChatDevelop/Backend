@@ -82,16 +82,39 @@ namespace Authorization
                 command.Parameters.AddWithValue("@Password", request.Password);
 
                 var result = command.ExecuteNonQuery();
-
+        
                 if (result > 0)
                 {
-                    HttpContext.Session.SetString("UserEmail", request.Email);
+                    _httpContextAccessor.HttpContext.Session.SetString("UserEmail", request.Email);
                     return Ok(true);
                 }
-
-                return Ok(false);
             }
+            return BadRequest("Registration failed");
         }
+
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] UserLoginRequest request)
+        {
+            bool isValidUser = false;
+            using (var connection = new MySqlConnection(TakeConnectionString()))
+            {
+                connection.Open();
+                var command = new MySqlCommand("SELECT COUNT(1) FROM Users WHERE Email = @Email AND Password = @Password", connection);
+                command.Parameters.AddWithValue("@Email", request.Email);
+                command.Parameters.AddWithValue("@Password", request.Password);
+
+                isValidUser = Convert.ToInt32(command.ExecuteScalar()) > 0;
+            }
+
+            if (isValidUser)
+            {
+                _httpContextAccessor.HttpContext.Session.SetString("UserEmail", request.Email);
+                return Ok(true);
+            }
+
+            return Unauthorized();
+        }
+
 
         [HttpDelete("delete")]
         public IActionResult DeleteUser([FromBody] UserDeleteRequest request)
@@ -115,30 +138,6 @@ namespace Authorization
                     return Ok(rowsAffected > 0);
                 }
             }
-        }
-
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] UserLoginRequest request)
-        {
-            bool isValidUser = false;
-            using (var connection = new MySqlConnection(TakeConnectionString()))
-            {
-                connection.Open();
-                var command =
-                    new MySqlCommand("SELECT COUNT(1) FROM Users WHERE Email = @Email AND Password = @Password",
-                        connection);
-                command.Parameters.AddWithValue("@Email", request.Email);
-                command.Parameters.AddWithValue("@Password", request.Password);
-
-                isValidUser = Convert.ToInt32(command.ExecuteScalar()) > 0;
-            }
-
-            if (isValidUser)
-            {
-                HttpContext.Session.SetString("UserEmail", request.Email);
-            }
-
-            return Ok(isValidUser);
         }
 
         [HttpGet("getuserinfo")]
@@ -179,7 +178,7 @@ namespace Authorization
         [HttpPost("logout")]
         public IActionResult Logout()
         {
-            HttpContext.Session.Clear(); // Очищаем сессию
+            HttpContext.Session.Clear();
             return Ok("User logged out successfully.");
         }
         [HttpGet("isAuthenticated")]
