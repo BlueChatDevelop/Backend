@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authorization", "Authorization.csproj", "{592DBFC4-2186-4DEC-87F0-4B43D44C2547}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetASP", "NetASP.csproj", "{592DBFC4-2186-4DEC-87F0-4B43D44C2547}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
