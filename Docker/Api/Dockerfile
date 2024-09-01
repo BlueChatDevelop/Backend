@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
 # Copy the project files to the container
-COPY ./../../API/Authorization/. ./
+COPY ./../../API/NetASP/. ./
 
 # Restore dependencies
 RUN dotnet restore
