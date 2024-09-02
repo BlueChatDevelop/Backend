@@ -54,11 +54,7 @@ public class AuthorizationController : ControllerBase
     [HttpPost("login")]
     public IActionResult Login([FromBody] UserLoginRequest request)
     {
-        bool isValidUser;
-        using (var reader = Get(["COUNT(1)"], [("Email", request.Email), ("Password", request.Password)]))
-        {
-            isValidUser = reader.HasRows;
-        }
+        bool isValidUser = Get(["COUNT(1)"], [("Email", request.Email), ("Password", request.Password)]).FieldCount > 0;
 
         if (isValidUser)
         {
@@ -73,13 +69,9 @@ public class AuthorizationController : ControllerBase
     [HttpDelete("delete")]
     public IActionResult DeleteUser()
     {
-        var email = HttpContext.Session.GetString("UserEmail");
-        if (string.IsNullOrEmpty(email))
-        {
-            return Unauthorized();
-        }
+        EnsureAuthenticated();
 
-        var reader = Delete([("Email", email)]);
+        var reader = Delete([("Email", HttpContext.Session.GetString("UserEmail"))]);
         HttpContext.Session.Clear();
         return Ok(reader > 0);
     }
