@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
 namespace NetASP;
@@ -32,36 +31,40 @@ public abstract class ControllerBase : Microsoft.AspNetCore.Mvc.ControllerBase
         return !string.IsNullOrEmpty(email);
     }
 
-    protected IActionResult EnsureAuthenticated()
+    protected void EnsureAuthenticated()
     {
         if (!IsUserAuthenticated())
         {
-            return Unauthorized("User is not logged in.");
+            Unauthorized("User is not logged in.");
+            return;
         }
 
-        return NotFound("User is not logged in.");
+        NotFound("User is not logged in.");
     }
 
     protected MySqlDataReader Get(string[] columns, (string, object)[]? filters = null)
     {
-        var command = new MySqlCommand();
-        command.Connection = new MySqlConnection(TakeConnectionString());
-
+        using var conn = new MySqlConnection(TakeConnectionString());
+        conn.Open();
         string columnsString = string.Join(", ", columns);
         string query = $"SELECT {columnsString} FROM {TableName}";
-
+        MySqlCommand command;
         if (filters is { Length: > 0 })
         {
             var filterConditions = filters.Select(f => $"{f.Item1} = @{f.Item1}");
             query += " WHERE " + string.Join(" AND ", filterConditions);
+            command = new MySqlCommand(query, conn);
 
             foreach (var filter in filters)
             {
                 command.Parameters.AddWithValue($"@{filter.Item1}", filter.Item2);
             }
         }
+        else
+        {
+            command = new MySqlCommand(query, conn);
+        }
 
-        command.CommandText = query;
         return command.ExecuteReader();
     }
 
